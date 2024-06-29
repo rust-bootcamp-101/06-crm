@@ -1,0 +1,7 @@
+{
+    "protoc": {
+        "optioins": [
+            "--proto_path=protos"
+        ]
+    }
+}
