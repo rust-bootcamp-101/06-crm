@@ -1,15 +1,32 @@
+use std::ops::Deref;
+use std::sync::Arc;
+
 use chrono::{DateTime, TimeZone, Utc};
 use futures::stream;
 use itertools::Itertools;
 use prost_types::Timestamp;
+use sqlx::PgPool;
 use tonic::{Response, Status};
 
 use crate::{
-    pb::{QueryRequest, RawQueryRequest, User},
-    ResponseStream, ServiceResult, UserStatsService,
+    pb::{user_stats_server::UserStatsServer, QueryRequest, RawQueryRequest, User},
+    AppConfig, ResponseStream, ServiceResult, UserStatsService, UserStatsServiceInner,
 };
 
 impl UserStatsService {
+    pub async fn new(config: AppConfig) -> Self {
+        let pool = PgPool::connect(&config.server.db_url)
+            .await
+            .expect("Failed to connect to db");
+        let inner = UserStatsServiceInner { config, pool };
+        Self {
+            inner: Arc::new(inner),
+        }
+    }
+
+    pub fn into_server(self) -> UserStatsServer<UserStatsService> {
+        UserStatsServer::new(self)
+    }
     pub async fn query(&self, query: QueryRequest) -> ServiceResult<ResponseStream> {
         // generate sql base on query
         let mut sql = "SELECT name, email FROM user_stats WHERE ".to_string();
@@ -50,6 +67,14 @@ impl UserStatsService {
         Ok(Response::new(Box::pin(stream::iter(
             ret.into_iter().map(Ok),
         ))))
+    }
+}
+
+impl Deref for UserStatsService {
+    type Target = UserStatsServiceInner;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
     }
 }
 

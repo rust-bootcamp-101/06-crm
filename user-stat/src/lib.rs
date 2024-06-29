@@ -3,7 +3,6 @@ pub mod pb;
 
 mod config;
 
-use std::ops::Deref;
 use std::pin::Pin;
 use std::sync::Arc;
 
@@ -12,10 +11,7 @@ use sqlx::PgPool;
 use tonic::{Request, Response, Status};
 
 pub use config::AppConfig;
-use pb::{
-    user_stats_server::{UserStats, UserStatsServer},
-    QueryRequest, RawQueryRequest, User,
-};
+use pb::{user_stats_server::UserStats, QueryRequest, RawQueryRequest, User};
 
 #[derive(Clone)]
 pub struct UserStatsService {
@@ -47,29 +43,5 @@ impl UserStats for UserStatsService {
     ) -> ServiceResult<Self::RawQueryStream> {
         let req = request.into_inner();
         self.raw_query(req).await
-    }
-}
-
-impl UserStatsService {
-    pub async fn new(config: AppConfig) -> Self {
-        let pool = PgPool::connect(&config.server.db_url)
-            .await
-            .expect("Failed to connect to db");
-        let inner = UserStatsServiceInner { config, pool };
-        Self {
-            inner: Arc::new(inner),
-        }
-    }
-
-    pub fn into_server(self) -> UserStatsServer<UserStatsService> {
-        UserStatsServer::new(self)
-    }
-}
-
-impl Deref for UserStatsService {
-    type Target = UserStatsServiceInner;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
     }
 }
