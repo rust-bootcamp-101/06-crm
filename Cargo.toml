@@ -1,5 +1,5 @@
 [workspace]
-members = ["crm", "user-stat"]
+members = ["crm", "crm-metadata", "crm-send", "user-stat"]
 resolver = "2"
 
 [workspace.dependencies]
@@ -20,3 +20,6 @@ serde_yaml = "0.9.34"
 itertools = "0.13.0"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+# fake数据, 用于模拟
+fake = { version = "2.9.2", features = ["derive", "chrono"] }
+rand = "0.8.5"

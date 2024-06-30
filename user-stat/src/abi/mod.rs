@@ -27,6 +27,7 @@ impl UserStatsService {
     pub fn into_server(self) -> UserStatsServer<UserStatsService> {
         UserStatsServer::new(self)
     }
+
     pub async fn query(&self, query: QueryRequest) -> ServiceResult<ResponseStream> {
         // generate sql base on query
         let mut sql = "SELECT name, email FROM user_stats WHERE ".to_string();

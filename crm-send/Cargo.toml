@@ -1,5 +1,5 @@
 [package]
-name = "user-stat"
+name = "crm-send"
 version = "0.1.0"
 edition = "2021"
 
@@ -22,11 +22,10 @@ itertools = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 
-
 [dev-dependencies]
-fake = { workspace = true }
+fake = { version = "2.9.2", features = ["derive", "chrono"] }
 nanoid = "0.4.0"
-rand = { workspace = true }
+rand = "0.8.5"
 
 [build-dependencies]
 anyhow = { workspace = true }

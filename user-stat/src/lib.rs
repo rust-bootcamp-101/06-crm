@@ -1,7 +1,6 @@
-pub mod abi;
-pub mod pb;
-
+mod abi;
 mod config;
+pub mod pb;
 
 use std::pin::Pin;
 use std::sync::Arc;
