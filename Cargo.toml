@@ -23,3 +23,5 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 # fake数据, 用于模拟
 fake = { version = "2.9.2", features = ["derive", "chrono"] }
 rand = "0.8.5"
+
+tokio-stream = "0.1.15"
