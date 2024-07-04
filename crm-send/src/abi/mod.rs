@@ -88,6 +88,10 @@ macro_rules! impl_sender {
     };
 }
 
+impl_sender!(EmailMessage, Msg::Email);
+impl_sender!(InAppMessage, Msg::InApp);
+impl_sender!(SmsMessage, Msg::Sms);
+
 macro_rules! impl_into_send_request {
     ($type:ty, $msg_type:expr) => {
         impl From<$type> for Msg {
@@ -106,13 +110,8 @@ macro_rules! impl_into_send_request {
 }
 
 impl_into_send_request!(EmailMessage, Msg::Email);
-impl_sender!(EmailMessage, Msg::Email);
-
 impl_into_send_request!(InAppMessage, Msg::InApp);
-impl_sender!(InAppMessage, Msg::InApp);
-
 impl_into_send_request!(SmsMessage, Msg::Sms);
-impl_sender!(SmsMessage, Msg::Sms);
 
 impl Deref for NotificationService {
     type Target = NotificationServiceInner;

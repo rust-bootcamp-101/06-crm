@@ -1,7 +1,7 @@
 #[allow(unused)]
 use crate::pb::InAppMessage;
 
-#[cfg(test)]
+#[cfg(feature = "test_utils")]
 impl InAppMessage {
     pub fn fake() -> Self {
         use uuid::Uuid;

@@ -1,7 +1,7 @@
 #[allow(unused)]
 use crate::pb::EmailMessage;
 
-#[cfg(test)]
+#[cfg(feature = "test_utils")]
 impl EmailMessage {
     pub fn fake() -> Self {
         use fake::{faker::internet::en::SafeEmail, Fake};

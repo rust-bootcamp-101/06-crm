@@ -3,6 +3,10 @@ members = ["crm", "crm-metadata", "crm-send", "user-stat"]
 resolver = "2"
 
 [workspace.dependencies]
+crm-metadata = { path = "crm-metadata" }
+crm-send = { path = "crm-send" }
+user-stat = { path = "user-stat" }
+
 anyhow = "1.0.86"
 prost = "0.12.6"
 prost-build = "0.12.6"
@@ -25,3 +29,4 @@ fake = { version = "2.9.2", features = ["derive", "chrono"] }
 rand = "0.8.5"
 
 tokio-stream = "0.1.15"
+sqlx-db-tester = { version = "0.4.2" }

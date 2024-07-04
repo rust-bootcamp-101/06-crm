@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+default = []
+test_utils = [
+    "fake",
+    "nanoid"
+]
 
 [dependencies]
 anyhow = { workspace = true }
@@ -24,9 +30,11 @@ tracing-subscriber = { workspace = true }
 tokio-stream = { workspace = true }
 uuid = { version = "1.9.1", features = ["v4"] }
 
+fake = { version = "2.9.2", features = ["derive", "chrono"], optional = true  }
+nanoid = { version = "0.4.0", optional = true }
+
 [dev-dependencies]
-fake = { version = "2.9.2", features = ["derive", "chrono"] }
-nanoid = "0.4.0"
+crm-send = { workspace = true, features = ["test_utils"] }
 rand = "0.8.5"
 
 [build-dependencies]
