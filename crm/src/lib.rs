@@ -2,10 +2,13 @@ pub mod abi;
 mod config;
 pub mod pb;
 
+use abi::DecodingKey;
 pub use config::AppConfig;
 
 use anyhow::Result;
-use tonic::{transport::Channel, Request, Response, Status};
+use tonic::{
+    service::interceptor::InterceptedService, transport::Channel, Request, Response, Status,
+};
 
 use crm_metadata::pb::metadata_client::MetadataClient;
 use crm_send::pb::notification_client::NotificationClient;
@@ -63,7 +66,8 @@ impl CrmService {
         })
     }
 
-    pub fn into_server(self) -> CrmServer<Self> {
-        CrmServer::new(self)
+    pub fn into_server(self) -> Result<InterceptedService<CrmServer<Self>, DecodingKey>> {
+        let dk = DecodingKey::load(&self.config.auth.pk)?;
+        Ok(CrmServer::with_interceptor(self, dk))
     }
 }

@@ -1,7 +1,11 @@
 use anyhow::Result;
 
 use crm::pb::{crm_client::CrmClient, WelcomeRequestBuilder};
-use tonic::transport::{Certificate, Channel, ClientTlsConfig};
+use tonic::{
+    metadata::MetadataValue,
+    transport::{Certificate, Channel, ClientTlsConfig},
+    Request,
+};
 use uuid::Uuid;
 
 #[tokio::main]
@@ -14,7 +18,16 @@ async fn main() -> Result<()> {
         .tls_config(tls)?
         .connect()
         .await?;
-    let mut client = CrmClient::new(channel);
+
+    // 这里作为学习Rust微服务的目的，就不实现jwt签发的功能了，直接生成的token
+    let token = include_str!("../../fixtures/token").trim();
+    println!("Token: {token}");
+    let token: MetadataValue<_> = format!("Bearer {token}").parse()?;
+
+    let mut client = CrmClient::with_interceptor(channel, move |mut req: Request<()>| {
+        req.metadata_mut().insert("authorization", token.clone());
+        Ok(req)
+    });
 
     let req = WelcomeRequestBuilder::default()
         .id(Uuid::new_v4().to_string())

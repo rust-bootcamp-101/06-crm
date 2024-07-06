@@ -19,7 +19,7 @@ async fn main() -> anyhow::Result<()> {
     let addr = format!("[::1]:{}", addr).parse()?;
 
     info!("CrmService listening on {}", &addr);
-    let svc = CrmService::try_new(config).await?.into_server();
+    let svc = CrmService::try_new(config).await?.into_server()?;
 
     let mut server_builder = Server::builder();
     if let Some(tls) = tls {

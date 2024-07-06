@@ -1,3 +1,7 @@
+mod auth;
+
+pub use auth::DecodingKey;
+
 use std::sync::Arc;
 
 use chrono::{Duration, Utc};

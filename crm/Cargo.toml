@@ -29,6 +29,8 @@ futures = { workspace = true }
 uuid = { workspace = true }
 tokio-stream = { workspace = true }
 
+jwt-simple = { version = "0.12.9", default-features = false, features = ["pure-rust"] }
+
 user-stat = { workspace = true }
 crm-send = { workspace = true }
 crm-metadata = { workspace = true }
