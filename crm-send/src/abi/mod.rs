@@ -2,6 +2,8 @@ mod email;
 mod in_app;
 mod sms;
 
+// pub use email::*;
+
 use std::ops::Deref;
 use std::sync::Arc;
 use std::time::Duration;

@@ -23,6 +23,8 @@ futures = "0.3.30"
 serde_yaml = "0.9.34"
 itertools = "0.13.0"
 tracing = "0.1.40"
+
+uuid = { version = "1.9.1", features = ["v4"] }
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 # fake数据, 用于模拟
 fake = { version = "2.9.2", features = ["derive", "chrono"] }

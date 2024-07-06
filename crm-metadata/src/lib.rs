@@ -7,14 +7,15 @@ use std::pin::Pin;
 use futures::Stream;
 use tonic::{Request, Response, Status, Streaming};
 
+pub use abi::Tpl;
 pub use config::AppConfig;
 use pb::{
     metadata_server::{Metadata, MetadataServer},
     Content, MaterializeRequest,
 };
 
-#[allow(unused)]
 pub struct MetadataService {
+    #[allow(unused)]
     config: AppConfig,
 }
 

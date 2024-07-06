@@ -5,11 +5,11 @@ package metadata;
 import "google/protobuf/timestamp.proto";
 
 enum ContentType {
-   CONTENT_TYPE_UNSPECIFIED = 0;
-   CONTENT_TYPE_SHORT = 1;
-   CONTENT_TYPE_VLOG = 2;
-   CONTENT_TYPE_MOVIE = 3;
-   CONTENT_TYPE_AI_GENERATED = 4;
+    CONTENT_TYPE_UNSPECIFIED = 0;
+    CONTENT_TYPE_SHORT = 1;
+    CONTENT_TYPE_VLOG = 2;
+    CONTENT_TYPE_MOVIE = 3;
+    CONTENT_TYPE_AI_GENERATED = 4;
 }
 
 message Content {

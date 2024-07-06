@@ -48,7 +48,7 @@ async fn query_should_work() -> Result<()> {
 
 async fn start_server(port: u16) -> Result<(TestPg, SocketAddr)> {
     let config = AppConfig::load()?;
-    let addr = config.server.port + port; // 避免测试端口冲突，此方法不是特别号
+    let addr = config.server.port + port; // 避免测试端口冲突，此方法不是特别好
     let addr = format!("[::1]:{}", addr).parse()?;
 
     let (tdb, svc) = UserStatsService::new_for_test().await?;

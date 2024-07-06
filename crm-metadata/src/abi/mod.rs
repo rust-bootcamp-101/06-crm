@@ -1,8 +1,10 @@
+use std::collections::HashSet;
+
 use fake::{
     faker::{chrono::en::DateTimeBetween, lorem::en::Sentence, name::zh_cn::Name},
     Fake, Faker,
 };
-use futures::StreamExt;
+use futures::{stream, StreamExt};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Response, Status};
 
@@ -37,6 +39,13 @@ impl MetadataService {
     }
 }
 
+impl MaterializeRequest {
+    pub fn new_with_ids(ids: &[u32]) -> impl Stream<Item = Self> {
+        let reqs: HashSet<_> = ids.iter().map(|id| Self { id: *id }).collect();
+        stream::iter(reqs)
+    }
+}
+
 impl Content {
     pub fn materialize(id: u32) -> Self {
         let mut rng = rand::thread_rng();
@@ -55,6 +64,18 @@ impl Content {
             likes: rng.gen_range(1234..100000),
             dislikes: rng.gen_range(123..10000),
         }
+    }
+
+    pub fn to_body(&self) -> String {
+        format!("Content: {:?}", self)
+    }
+}
+
+pub struct Tpl<'a>(pub &'a [Content]);
+
+impl<'a> Tpl<'a> {
+    pub fn to_body(&self) -> String {
+        format!("Tpl: {:?}", self.0)
     }
 }
 
