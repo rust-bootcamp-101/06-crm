@@ -7,7 +7,8 @@ pg_dump:
 	@sed 's/public.export_user_stats/user_stats/' ./user-stat/fixtures/test.sql > ./user-stat/fixtures/temp.sql && mv ./user-stat/fixtures/temp.sql ./user-stat/fixtures/test.sql
 
 
-crm_tests:
-	@cd ./user-stat && cargo run
-	@cd ./crm-metadata && cargo run
-	@cd ./crm-send && cargo run
+gitcommit:
+	@cargo fmt
+	@git status
+	@git add .
+	@git commit -a
