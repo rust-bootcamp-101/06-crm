@@ -50,7 +50,7 @@ pub mod test_utils {
     use std::{env, path::Path, sync::Arc};
 
     use anyhow::Result;
-    use chrono::{Duration, Utc};
+    use chrono::{Duration, TimeZone, Utc};
     use prost_types::Timestamp;
 
     use crate::{
@@ -110,7 +110,11 @@ pub mod test_utils {
     }
 
     pub fn days_to_timestamp(days: i64) -> Timestamp {
-        let dt = Utc::now().checked_sub_signed(Duration::days(days)).unwrap();
+        let dt = Utc
+            .with_ymd_and_hms(2024, 7, 6, 0, 0, 0)
+            .unwrap()
+            .checked_sub_signed(Duration::days(days))
+            .unwrap();
         Timestamp {
             seconds: dt.timestamp(),
             nanos: dt.timestamp_subsec_nanos() as i32,

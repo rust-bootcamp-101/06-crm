@@ -1,19 +1,20 @@
-use std::net::SocketAddr;
-
 use anyhow::Result;
 
-use crm::{
-    pb::{crm_client::CrmClient, WelcomeRequestBuilder},
-    AppConfig,
-};
+use crm::pb::{crm_client::CrmClient, WelcomeRequestBuilder};
+use tonic::transport::{Certificate, Channel, ClientTlsConfig};
 use uuid::Uuid;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = AppConfig::load().expect("Failed to load config");
-    let addr = config.server.port;
-    let addr: SocketAddr = format!("[::1]:{}", addr).parse()?;
-    let mut client = CrmClient::connect(format!("http://{addr}")).await?;
+    let pem = include_str!("../../fixtures/rootCA.pem");
+    let tls = ClientTlsConfig::new()
+        .ca_certificate(Certificate::from_pem(pem))
+        .domain_name("localhost");
+    let channel = Channel::from_static("https://[::1]:50051")
+        .tls_config(tls)?
+        .connect()
+        .await?;
+    let mut client = CrmClient::new(channel);
 
     let req = WelcomeRequestBuilder::default()
         .id(Uuid::new_v4().to_string())
