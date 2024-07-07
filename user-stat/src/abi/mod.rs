@@ -12,8 +12,8 @@ use tracing::info;
 
 use crate::{
     pb::{
-        user_stats_server::UserStatsServer, QueryRequest, QueryRequestBuilder, RawQueryRequest,
-        TimeQuery, User,
+        user_stats_server::UserStatsServer, IdQuery, QueryRequest, QueryRequestBuilder,
+        RawQueryRequest, TimeQuery, User,
     },
     AppConfig, ResponseStream, ServiceResult, UserStatsService, UserStatsServiceInner,
 };
@@ -59,23 +59,38 @@ impl UserStatsService {
 
 impl QueryRequest {
     pub fn new_with_date(name: &str, lower: DateTime<Utc>, upper: DateTime<Utc>) -> Self {
-        let lower_ts = Timestamp {
-            seconds: lower.timestamp(),
-            nanos: 0,
-        };
-        let upper_ts = Timestamp {
-            seconds: upper.timestamp(),
-            nanos: 0,
-        };
+        Self::new_with_timestamps(&[(name, lower, upper)])
+    }
 
-        let tq = TimeQuery {
-            lower: Some(lower_ts),
-            upper: Some(upper_ts),
-        };
-        QueryRequestBuilder::default()
-            .timestamp((name.to_string(), tq))
-            .build()
-            .expect("Failed to build query request")
+    pub fn new_with_ids(ids: &[(&str, &[u32])]) -> Self {
+        let mut query = QueryRequestBuilder::default();
+        for v in ids {
+            let iq = IdQuery { ids: v.1.to_vec() };
+            query.id((v.0.to_string(), iq));
+        }
+        query.build().expect("Failed to build query request")
+    }
+
+    pub fn new_with_timestamps(timestamps: &[(&str, DateTime<Utc>, DateTime<Utc>)]) -> Self {
+        let mut query = QueryRequestBuilder::default();
+        for t in timestamps {
+            let lower_ts = Timestamp {
+                seconds: t.1.timestamp(),
+                nanos: 0,
+            };
+            let upper_ts = Timestamp {
+                seconds: t.2.timestamp(),
+                nanos: 0,
+            };
+
+            let tq = TimeQuery {
+                lower: Some(lower_ts),
+                upper: Some(upper_ts),
+            };
+            query.timestamp((t.0.to_string(), tq));
+        }
+
+        query.build().expect("Failed to build query request")
     }
 }
 
@@ -89,7 +104,8 @@ impl Deref for UserStatsService {
 
 impl fmt::Display for QueryRequest {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut sql = "SELECT name, email FROM user_stats WHERE ".to_string();
+        let mut sql =
+            "SELECT name, email, started_but_not_finished FROM user_stats WHERE ".to_string();
         let timestamp_conditions = self
             .timestamps
             .iter()
@@ -225,7 +241,7 @@ mod tests {
         let dt2 = Utc.with_ymd_and_hms(2024, 1, 2, 0, 0, 0).unwrap();
         let query = QueryRequest::new_with_date("created_at", dt1, dt2);
         let sql = query.to_string();
-        assert_eq!(sql, "SELECT name, email FROM user_stats WHERE created_at BETWEEN '2024-01-01T00:00:00+00:00' AND '2024-01-02T00:00:00+00:00'");
+        assert_eq!(sql, "SELECT name, email, started_but_not_finished FROM user_stats WHERE created_at BETWEEN '2024-01-01T00:00:00+00:00' AND '2024-01-02T00:00:00+00:00'");
         Ok(())
     }
 }

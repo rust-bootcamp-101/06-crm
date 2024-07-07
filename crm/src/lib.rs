@@ -40,16 +40,18 @@ impl Crm for CrmService {
     /// last visited or watched in X days, given them something to watch
     async fn recall(
         &self,
-        _req: Request<RecallRequest>,
+        req: Request<RecallRequest>,
     ) -> Result<Response<RecallResponse>, Status> {
-        todo!()
+        let req = req.into_inner();
+        self.recall(req).await
     }
     /// last watched in X days, and user still have unfinished contents
     async fn remind(
         &self,
-        _req: Request<RemindRequest>,
+        req: Request<RemindRequest>,
     ) -> Result<Response<RemindResponse>, Status> {
-        todo!()
+        let req = req.into_inner();
+        self.remind(req).await
     }
 }
 
